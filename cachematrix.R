@@ -6,13 +6,13 @@
 
 ## Create a special matrix that allows to cache its inverse
 
-makeCacheMatrix <- function(cache.matrix = matrix()) {
+makeCacheMatrix <- function(x = matrix()) {
   cache.inv <- NULL
   set <- function(my.matrix) {
-    cache.matrix <<- my.matrix
+    x <<- my.matrix
     cache.inv <<- NULL
   }
-  get <- function() cache.matrix
+  get <- function() x
   set.inv <- function(my.inv) cache.inv <<- my.inv
   get.inv <- function() cache.inv
   list(set=set, get=get,
@@ -25,5 +25,14 @@ makeCacheMatrix <- function(cache.matrix = matrix()) {
 ## Otherwise, calculate it and store the value in the cache
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  ## Return a matrix that is the inverse of 'x'
+  cache.inv <- x$get.inv()
+  if (!is.null(cache.inv)) {
+    message("getting cached data")
+    return(cache.inv)
+  }
+  data <- x$get()
+  cache.inv <- solve(x, ...)
+  x$set.inv(cache.inv)
+  cache.inv
 }
